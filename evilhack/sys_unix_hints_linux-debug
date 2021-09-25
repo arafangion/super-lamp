@@ -1,0 +1,67 @@
+#
+# NetHack 3.6  linux $NHDT-Date: 1432512814 2015/05/25 00:13:34 $  $NHDT-Branch: master $:$NHDT-Revision: 1.12 $
+# Copyright (c) Kenneth Lorber, Kensington, Maryland, 2007.
+# NetHack may be freely redistributed.  See license for details. 
+#
+#-PRE
+# Linux hints file
+# This hints file provides a single-user tty build for Linux, specifically
+# for Ubuntu dapper.
+
+
+PREFIX=$(out)
+#PREFIX=$(wildcard ~)/nh/install
+SHELLDIR = $(PREFIX)/games
+INSTDIR=$(PREFIX)/games/lib/evilhackdir
+HACKDIR= ~/.config/evilhack
+VARDIR = $(HACKDIR)
+
+#POSTINSTALL=cp -n sys/unix/sysconf $(INSTDIR)/sysconf; $(CHOWN) $(GAMEUID) $(INSTDIR)/sysconf; $(CHGRP) $(GAMEGRP) $(INSTDIR)/sysconf; chmod $(VARFILEPERM) $(INSTDIR)/sysconf;
+
+CFLAGS=-g3 -O2 -I../include -DNOTPARMDECL -fno-common
+CFLAGS+=$(NIX_CFLAGS_COMPILE)
+CFLAGS+=-DDLB
+CFLAGS+=-DGDBPATH=\"$(gdbpath)\"
+CFLAGS+=-DCOMPRESS=\"/bin/gzip\" -DCOMPRESS_EXTENSION=\".gz\"
+CFLAGS+=-DGCC_WARN -Wall -Wextra -Wformat=2 #-Werror
+CFLAGS+=-Wimplicit -Wreturn-type -Wunused -Wswitch -Wshadow -Wwrite-strings
+CFLAGS+=-Wno-format-nonliteral
+CFLAGS+=-Wno-stringop-truncation
+CFLAGS+=-Wno-missing-field-initializers
+CFLAGS+=-Wno-format-overflow -Wno-stringop-overflow
+CFLAGS+=-DSYSCF -DSYSCF_FILE=\"$(INSTDIR)/sysconf\" -DSECURE
+CFLAGS+=-DTIMED_DELAY
+CFLAGS+=-DHACKDIR=\"$(HACKDIR)\"
+CFLAGS+=-DVAR_PLAYGROUND=\"$(VARDIR)\"
+CFLAGS+=-DCONFIG_ERROR_SECURE=FALSE
+CFLAGS+=-DCURSES_GRAPHICS
+CFLAGS+=-DPANICLOG_FMT2
+CFLAGS+=-DTTY_TILES_ESCCODES
+CFLAGS+=-DDGAMELAUNCH
+CFLAGS+=-DLIVELOG_ENABLE
+CFLAGS+=-DDUMPLOG
+CFLAGS+=-DDUMPHTML
+
+LINK=$(CC)
+# Only needed for GLIBC stack trace:
+LFLAGS=-rdynamic
+
+WINSRC = $(WINTTYSRC) $(WINCURSESSRC)
+WINOBJ = $(WINTTYOBJ) $(WINCURSESOBJ)
+WINLIB = $(WINTTYLIB) $(WINCURSESLIB)
+
+# if TTY_TILES_ESCCODES
+WINSRC += tile.c
+WINOBJ += tile.o
+
+WINTTYLIB=-lncurses -ltinfo
+
+CHOWN=true
+CHGRP=true
+
+GAMEUID=games
+GAMEGRP=bin
+
+VARDIRPERM = 0755
+VARFILEPERM = 0600
+GAMEPERM = 0755
