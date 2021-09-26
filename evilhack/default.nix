@@ -44,6 +44,8 @@ in pkgs.stdenv.mkDerivation {
 
       if [ ! -d ${userDir} ]; then
         mkdir -p ${userDir}
+        mkdir -p ${userDir}/save
+        mkdir -p ${userDir}/whereis
         cp -r $out/games/lib/evilhackdir/* ${userDir}
         chmod -R +w ${userDir}
       fi
